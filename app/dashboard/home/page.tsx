@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { getArtworks } from "@/services/dataServices";
 import dynamic from "next/dynamic";
 import { Artwork } from "@/types/api.types";
@@ -21,6 +21,8 @@ export default function HomePage() {
     "https://www.artic.edu/iiif/2"
   );
   const itemsPerPage = 20;
+
+  const observerRef = useRef<HTMLDivElement | null>(null);
 
   const fetchArtworksData = useCallback(
     async (pageToFetch: number) => {
@@ -57,11 +59,28 @@ export default function HomePage() {
     fetchArtworksData(1);
   }, [fetchArtworksData]);
 
-  const handleLoadMore = () => {
-    if (currentPage < totalPages && !isLoadingMore) {
-      fetchArtworksData(currentPage + 1);
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const firstEntry = entries[0];
+        if (firstEntry.isIntersecting && currentPage < totalPages && !isLoadingMore) {
+          fetchArtworksData(currentPage + 1);
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    const currentObserverRef = observerRef.current;
+    if (currentObserverRef) {
+      observer.observe(currentObserverRef);
     }
-  };
+
+    return () => {
+      if (currentObserverRef) {
+        observer.unobserve(currentObserverRef);
+      }
+    };
+  }, [currentPage, totalPages, isLoadingMore, fetchArtworksData]);
 
   if (isLoading) {
     return (
@@ -90,7 +109,7 @@ export default function HomePage() {
 
         {artworks.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
-            {artworks.map((artwork) => (
+            {artworks.map((artwork, index) => (
               <ArtworkCard
                 key={artwork.id}
                 artwork={artwork}
@@ -106,20 +125,13 @@ export default function HomePage() {
           )
         )}
 
+        {!isLoading && currentPage < totalPages && artworks.length > 0 && (
+          <div ref={observerRef} style={{ height: '1px' }} />
+        )}
+
         {isLoadingMore && (
           <div className="text-center py-8">
             <p className="text-lg text-slate-600">Cargando más obras...</p>
-          </div>
-        )}
-
-        {currentPage < totalPages && !isLoadingMore && artworks.length > 0 && (
-          <div className="text-center mt-10">
-            <button
-              onClick={handleLoadMore}
-              className="bg-primary hover:bg-primary/90 text-white font-semibold py-3 px-8 rounded-lg shadow-md transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary/50"
-            >
-              Cargar Más Obras
-            </button>
           </div>
         )}
       </div>
