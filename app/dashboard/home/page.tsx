@@ -1,14 +1,8 @@
 "use client";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { getArtworks } from "@/services/dataServices";
-import dynamic from "next/dynamic";
 import { Artwork } from "@/types/api.types";
-import { ArtworkCardSkeleton } from "@/lib/utils";
-
-const ArtworkCard = dynamic(() => import("@/components/ui/ArtworkCard"), {
-  loading: () => <ArtworkCardSkeleton />,
-  ssr: false,
-});
+import ArtworkCard from "@/components/ui/ArtworkCard";
 
 export default function HomePage() {
   const [artworks, setArtworks] = useState<Artwork[]>([]);

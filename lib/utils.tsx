@@ -1,3 +1,10 @@
+import dynamic from "next/dynamic";
+
+const ArtworkCard = dynamic(() => import("@/components/ui/ArtworkCard"), {
+  loading: () => <ArtworkCardSkeleton />,
+  ssr: false,
+});
+
 export const ArtworkCardSkeleton = () => (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden animate-pulse">
       <div className="relative w-full h-64 bg-gray-300"></div>
