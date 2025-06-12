@@ -97,6 +97,46 @@ La estrategia de logout está diseñada para ser coherente con la separación de
 
 Esta estrategia asegura que tanto el estado del cliente como el reconocimiento del servidor (a través de la cookie) se actualicen, manteniendo la integridad del sistema público/privado.
 
+
+### Estado Global
+
+Aunque el estado global de esta aplicación es relativamente simple (principalmente estado de autenticación), usar Zustand es una decisión totalmente justificable y, en muchos aspectos, una mejor práctica que usar solo React Context.
+
+#### Justificaciones para usar Zustand
+
+1. Menos Boilerplate y Más Sencillez:
+   * React Context: Requiere crear un contexto (createContext), un Provider que envuelva tu árbol de componentes (<AuthProvider>), y usar el hook useContext en cada componente que consuma el estado.
+    * Zustand: crear un "store" con una simple función create(). Luego, en cualquier componente, simplemente llamas al hook useAuthStore() para acceder al estado y las acciones. No se necesita envolver la aplicación en ningún provider. Esto mantiene el árbol de componentes más limpio.
+  
+2. Rendimiento Superior (Evita Re-renders Innecesarios):
+
+   * Este es el argumento técnico más importante.
+    * React Context: Cuando cualquier valor dentro del estado del contexto cambia, todos los componentes que consumen ese contexto (useContext) se vuelven a renderizar, incluso si no usan la          parte específica del estado que cambió.
+    * Zustand: Está optimizado para evitar esto. Puedes seleccionar "rebanadas" (slices) del estado. Un componente solo se volverá a renderizar si la rebanada específica del estado que le             interesa ha cambiado.
+
+3. Lógica Desacoplada del Árbol de React:
+
+    * El store de Zustand es un objeto JavaScript que vive fuera del árbol de componentes de React. Esto facilita la organización de la lógica del estado (como login, logout) y hace que sea más       fácil de probar de forma aislada.
+
+4. Middleware Integrado:
+
+    * Zustand tiene un ecosistema de middleware muy potente. Se esta usando persist para guardar el estado en sessionStorage y se ha integrado js-cookie en las acciones. Hacer esto con React           Context sería mucho más manual y verboso, probablemente requiriendo useEffects dentro de tu componente Provider para sincronizar el estado con sessionStorage y las cookies.
+
+#### Consideraciones
+
+Aunque el impacto en el rendimiento puede no ser dramático en una aplicación de este tamaño, las ventajas arquitectónicas son claras:
+
+* Es más escalable: Si la aplicación crece y más componentes necesitan acceder a diferentes partes del estado, la optimización de re-renders de Zustand se volverá cada vez más valiosa.
+* Es más limpio: La ausencia de Providers y la capacidad de seleccionar el estado de forma concisa hacen que el código sea más legible y fácil de mantener.
+* Es más potente: La facilidad para añadir middleware como persist es una gran ventaja.
+  
+#### ¿Cuándo sería suficiente React Context?
+
+React Context es ideal para pasar datos que no cambian con frecuencia o para evitar el "prop drilling" en un sub-árbol de componentes localizado y no en toda la aplicación. Por ejemplo, para un estado de un formulario complejo que se comparte entre varios componentes hijos de ese formulario, o para un tema (claro/oscuro) que no cambia a menudo.
+
+Para un estado verdaderamente global y dinámico como la autenticación del usuario, que es accedido desde lugares muy diferentes (Header, páginas, middleware indirectamente), Zustand (o librerías similares como Redux Toolkit, Jotai, etc.) es una solución arquitectónicamente más robusta y eficiente.
+
+
 ### Propuesta de Mejora Teórica sobre Llamadas al Backend
 
 Actualmente, la aplicación realiza llamadas directas a la API pública del Art Institute of Chicago desde el cliente y un handle router para mockear el login. Para mejorar la eficiencia, seguridad y control, propongo algunos patrones o buenas practicas.
