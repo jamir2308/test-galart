@@ -1,6 +1,6 @@
 import dynamic from "next/dynamic";
 
-const ArtworkCard = dynamic(() => import("@/components/ui/ArtworkCard"), {
+export const ArtworkCard = dynamic(() => import("@/components/ui/ArtworkCard"), {
   loading: () => <ArtworkCardSkeleton />,
   ssr: false,
 });

@@ -2,7 +2,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { getArtworks } from "@/services/dataServices";
 import { Artwork } from "@/types/api.types";
-import ArtworkCard from "@/components/ui/ArtworkCard";
+import { ArtworkCard } from "@/lib/utils";
 
 export default function HomePage() {
   const [artworks, setArtworks] = useState<Artwork[]>([]);
