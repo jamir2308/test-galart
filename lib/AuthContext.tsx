@@ -28,10 +28,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setIsAuthenticated(false);
         }
       } else {
+        await fetch('/api/auth/logout', { method: 'POST' });
         setUser(null);
         setIsAuthenticated(false);
       }
     } catch (err) {
+        await fetch('/api/auth/logout', { method: 'POST' });
       console.error(err);
       setUser(null);
       setIsAuthenticated(false);
