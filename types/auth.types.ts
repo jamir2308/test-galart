@@ -11,4 +11,13 @@ export interface AuthState {
   login: (token: string, userData: User) => void; 
   logout: () => void;
   initializeAuth: () => void;
-} 
+}
+
+export interface AuthContextType {
+  user: User | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  error: string | null;
+  login: (email: string, pass: string) => Promise<void>;
+  logout: () => Promise<void>;
+}

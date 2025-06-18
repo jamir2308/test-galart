@@ -1,11 +1,8 @@
 'use client';
-import { forwardRef, InputHTMLAttributes } from 'react';
+import { InputProps } from '@/types/component.types';
+import { forwardRef } from 'react';
 
-type Props = InputHTMLAttributes<HTMLInputElement> & {
-  label: string;
-};
-
-export const Input = forwardRef<HTMLInputElement, Props>(
+export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ label, className = '', ...props }, ref) => (
     <label className="flex flex-col gap-1 text-sm font-medium text-gray-700">
       {label}

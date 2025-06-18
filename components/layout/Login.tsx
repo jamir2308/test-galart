@@ -1,18 +1,9 @@
 'use client';
 import { useForm } from 'react-hook-form';
 import { Input } from '@/components/form/Input';
+import { FormData, LoginFormProps } from '@/types/component.types';
 
-type FormData = {
-    email: string;
-    password: string;
-    remember: boolean;
-};
 
-interface LoginFormProps {
-    onSubmit: (data: Pick<FormData, 'email' | 'password'>) => Promise<void>;
-    isLoading: boolean;
-    error: string | null;
-  }
 
 export default function LoginForm({ onSubmit, error }: LoginFormProps) {
     const { register, handleSubmit } = useForm<FormData>({
