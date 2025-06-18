@@ -4,7 +4,6 @@ import { useAuth } from '@/lib/AuthContext';
 import Navbar from '@/components/layout/Header';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { LOGIN_ROUTE } from '@/lib/constants';
 
 export default function PrivateLayout({
   children,
@@ -16,20 +15,24 @@ export default function PrivateLayout({
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      router.replace(LOGIN_ROUTE);
+      router.replace('/login');
     }
   }, [isAuthenticated, isLoading, router]);
 
   if (isLoading) {
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
-            <p className="text-xl text-slate-600">Verificando sesión...</p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <p className="text-xl text-slate-600">Verificando sesión...</p>
+      </div>
     );
   }
 
   if (!isAuthenticated) {
-    return null;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <p className="text-xl text-slate-600">Redirigiendo a login...</p>
+      </div>
+    );
   }
 
   return (

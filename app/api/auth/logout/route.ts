@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';
 export async function POST() {
   (await cookies()).set('authToken', '', {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: true,
     path: '/',
     expires: new Date(0),
   });

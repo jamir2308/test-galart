@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
 const HARDCODED_TOKEN = 'secret-hardcoded-token-for-simulation'; 
-const MOCK_USER_EMAIL = 'john.doe@example.com';
+const MOCK_USER_EMAIL = 'john@example.com';
 
 export async function GET() {
   const token = (await cookies()).get('authToken');
